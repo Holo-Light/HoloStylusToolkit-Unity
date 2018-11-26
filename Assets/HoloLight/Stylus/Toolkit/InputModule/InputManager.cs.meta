@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: dfc3eeded6c131c4984f1901ec0178e5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _HMUTransform: {instanceID: 0}
+  - Configuration: {fileID: 11400000, guid: 60fcdaaefa3a34748849b93e9215a39f, type: 2}
+  executionOrder: -100
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
