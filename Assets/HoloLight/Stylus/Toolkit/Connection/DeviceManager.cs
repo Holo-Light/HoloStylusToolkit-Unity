@@ -14,6 +14,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using HoloLight.HoloStylus.InputModule;
 using System.Linq;
+using System.Xml.Serialization;
+using System.IO;
 
 #if WINDOWS_UWP
 using HoloLight.DriverLibrary.Events;
@@ -79,6 +81,21 @@ namespace HoloLight.HoloStylus.Connection
         // flag for connection allowed
         private bool _canConnect = true;
 
+        /// <summary>
+        /// If active, Stylus will be auto-connected
+        /// </summary>
+        public bool AutoConnect = true;
+
+        /// <summary>
+        /// Base device name for identification
+        /// </summary>
+        private string _baseDeviceName = "HoloSense_pajdata";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string SETTINGS_FILE_NAME = "StylusSettings.xml";
+
         // Initializing singleton and dont destroy on load, device manager is persistent
         private void Awake()
         {
@@ -99,6 +116,12 @@ namespace HoloLight.HoloStylus.Connection
             if (Instance == this)
             {
                 Instance = null;
+            }
+
+            if (AutoConnect)
+            {
+                OnDeviceFound -= OnAutoConnectDeviceFound;
+                OnConnect -= OnAutoConnected;
             }
         }
 
@@ -171,6 +194,17 @@ namespace HoloLight.HoloStylus.Connection
             }
         }
 
+        private Queue<DeviceInformation> _onConnectToMainThread = new Queue<DeviceInformation>();
+
+        private void OnConnectToMainThread(DeviceInformation deviceInfo)
+        {
+            if (OnConnect == null)
+            {
+                return;
+            }
+            OnConnect(deviceInfo);
+        }
+
 #if WINDOWS_UWP
         /// <summary>
         /// Connects to the device
@@ -193,12 +227,10 @@ namespace HoloLight.HoloStylus.Connection
 
             EndDeviceSearch();
             StartTracking();
-            if(OnConnect == null)
-            {
-                return;
-            }
-            OnConnect(deviceInfo);
+            _onConnectToMainThread.Enqueue(deviceInfo);
         }
+
+        
 
         /// <summary>
         /// Start access to tracking services
@@ -246,11 +278,8 @@ namespace HoloLight.HoloStylus.Connection
             }
 
             _hmuDevice = deviceInfo;
-            if(OnConnect == null)
-            {
-                return;
-            }
-            OnConnect(_hmuDevice);
+
+            _onConnectToMainThread.Enqueue(_hmuDevice);
         }
 
         /// <summary>
@@ -323,15 +352,100 @@ namespace HoloLight.HoloStylus.Connection
         // Initiliaze the device search
         void Start()
         {
+            LoadStylusSettings();
+            if (AutoConnect)
+            {
+                OnDeviceFound += OnAutoConnectDeviceFound;
+                OnConnect += OnAutoConnected;
+            }
             StartDeviceSearch();
             DontDestroyOnLoad(transform.root.gameObject);
 
         }
 
+        void OnAutoConnectDeviceFound(DeviceInformation device)
+        {
+            if(!device.Pairing.IsPaired)
+            {
+                return;
+            }
+
+            string nameToLower = device.Name.ToLower();
+            string baseName = _baseDeviceName.ToLower();
+            if(nameToLower.Contains(baseName))
+            {
+                ConnectToDevice(device);
+            }
+        }
+
+        void OnAutoConnected(DeviceInformation device)
+        {
+            Debug.Log("Connected to: " + device.Name);
+            OnDeviceFound -= OnAutoConnectDeviceFound;
+            OnConnect -= OnAutoConnected;
+        }
+
         // Refreshs the stylus data
         private void Update()
         {
+            if(_onConnectToMainThread.Count > 0)
+            {
+                var device = _onConnectToMainThread.Dequeue();
+                OnConnectToMainThread(device);
+            }
             SetStylusData(_HMUStatus);
         }
+
+        public void SaveStylusSettings()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(SettingsFile));
+
+            SettingsFile settings = new SettingsFile();
+
+            settings.BaseDeviceName = _baseDeviceName;
+
+            if(!Directory.Exists(Application.persistentDataPath))
+            {
+                Directory.CreateDirectory(Application.persistentDataPath);
+            }
+
+            using (FileStream file = File.Create(Application.persistentDataPath + "/" + SETTINGS_FILE_NAME))
+            {
+                serializer.Serialize(file, settings);
+            }
+        }
+
+        public void LoadStylusSettings()
+        {
+            if (!File.Exists(Application.persistentDataPath + "/" + SETTINGS_FILE_NAME))
+            {
+                SaveStylusSettings();
+                LoadStylusSettings();
+            }
+            else
+            { 
+
+                XmlSerializer serializer = new XmlSerializer(typeof(SettingsFile));
+
+                SettingsFile settings;
+
+                using (FileStream file = File.Open(Application.persistentDataPath + "/" + SETTINGS_FILE_NAME, FileMode.Open))
+                {
+                    settings = serializer.Deserialize(file) as SettingsFile;
+                }
+
+                if (settings == null)
+                    return;
+
+                _baseDeviceName = settings.BaseDeviceName;
+            }
+        }
+    }
+
+    [XmlRoot("StylusSettings")]
+    public class SettingsFile
+    {
+        [XmlAttribute("BaseDeviceName")]
+        public string BaseDeviceName = "";
     }
 }

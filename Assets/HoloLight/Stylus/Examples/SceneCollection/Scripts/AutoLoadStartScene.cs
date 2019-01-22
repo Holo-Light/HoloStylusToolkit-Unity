@@ -10,6 +10,7 @@
  * Author of this file is Peter Roth
  *******************************************************/
 #endregion
+using HoloLight.HoloStylus.Connection;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,24 +21,25 @@ namespace HoloLight.HoloStylus.Examples.SceneCollection
     /// <summary>
     /// Auto loads the collection scene, for connection, calibration, and to get access to all sample scenes.
     /// </summary>
-    public class AutoLoadSceneCollection : MonoBehaviour
+    public class AutoLoadStartScene : MonoBehaviour
     {
         /// <summary>
         /// Initializing the collection scene, if it isn't already loaded.
         /// </summary>
         void Awake()
         {
-            bool isLoaded = false;
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                var scene = SceneManager.GetSceneAt(i);
-                if(scene.buildIndex == SceneCollectionManager.COLLECTION_SCENE_BUILDINDEX)
-                {
-                    isLoaded = true;                    
-                }
-            }
+            //bool isLoaded = false;
+            //for (int i = 0; i < SceneManager.sceneCount; i++)
+            //{
+            //    var scene = SceneManager.GetSceneAt(i);
+            //    if(scene.buildIndex == SceneCollectionManager.COLLECTION_SCENE_BUILDINDEX)
+            //    {
+            //        isLoaded = true;                    
+            //    }
+            //}
+            bool isLoaded = (DeviceManager.Instance != null);
 
-            if(!isLoaded)
+            if (!isLoaded)
             {
                 var gos = FindObjectsOfType<GameObject>();
 
@@ -49,7 +51,8 @@ namespace HoloLight.HoloStylus.Examples.SceneCollection
                     }
                 }
 
-                SceneManager.LoadScene(SceneCollectionManager.COLLECTION_SCENE_BUILDINDEX, LoadSceneMode.Single);
+                //SceneManager.LoadScene(SceneCollectionManager.COLLECTION_SCENE_BUILDINDEX, LoadSceneMode.Single);
+                SceneManager.LoadScene(0, LoadSceneMode.Single);
             }
             else
             {

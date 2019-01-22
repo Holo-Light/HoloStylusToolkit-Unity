@@ -36,6 +36,12 @@ namespace HoloLight.HoloStylus.Examples.SceneCollection
         /// </summary>
         [Tooltip("Button description"), Multiline]
         public string Description = "";
+
+        /// <summary>
+        /// Button won't be spawned, if inactive
+        /// </summary>
+        [Tooltip("Button won't be spawned, if inactive")]
+        public bool IsActive = true;
     }
 
     /// <summary>
@@ -46,7 +52,7 @@ namespace HoloLight.HoloStylus.Examples.SceneCollection
         /// <summary>
         /// The build index of the collection scene.
         /// </summary>
-        public const int COLLECTION_SCENE_BUILDINDEX = 1;
+        public const int COLLECTION_SCENE_BUILDINDEX = 2;
 
         /// <summary>
         /// Prefab of the scene button.
@@ -108,7 +114,10 @@ namespace HoloLight.HoloStylus.Examples.SceneCollection
             ClearButtons();
             foreach (var sceneName in _sceneNames)
             {
-                CreateSceneButton(sceneName);
+                if(sceneName.IsActive)
+                {
+                    CreateSceneButton(sceneName);
+                }
             }
         }
 

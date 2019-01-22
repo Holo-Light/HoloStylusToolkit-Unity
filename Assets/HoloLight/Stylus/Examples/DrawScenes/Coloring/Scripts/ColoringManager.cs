@@ -147,9 +147,11 @@ namespace HoloLight.HoloStylus.Examples.DrawScenes
                 _brushCursor.SetActive(false);
                 _applying = true;
 
-                // if scripting runtime version is not .net.4.6 use 
-                // Invoke("ApplyTexture", INVOKE_TIME);
+#if NET_4_6
                 Invoke(nameof(ApplyTexture), INVOKE_TIME);
+#else
+                Invoke("ApplyTexture", INVOKE_TIME);
+#endif
             }
         }
 
@@ -212,9 +214,11 @@ namespace HoloLight.HoloStylus.Examples.DrawScenes
             _paintedTexture.texture = tex;
             _brushSystem.Clear();
 
-            // if scripting runtime version is not .net.4.6 use 
-            // Invoke("ShowCursor", INVOKE_TIME);
+#if NET_4_6
             Invoke(nameof(ShowCursor), INVOKE_TIME);
+#else
+            Invoke("ShowCursor", INVOKE_TIME);
+#endif
         }
 
         /// <summary>

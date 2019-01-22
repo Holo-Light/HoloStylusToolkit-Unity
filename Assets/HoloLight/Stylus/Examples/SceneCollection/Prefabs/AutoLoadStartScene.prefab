@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4587153795011722}
   - component: {fileID: 114450534027068036}
   m_Layer: 0
-  m_Name: AutoLoadSceneCollection
+  m_Name: AutoLoadStartScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

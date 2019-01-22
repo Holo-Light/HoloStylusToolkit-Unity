@@ -68,8 +68,8 @@ namespace HoloLight.HoloStylus.Connection.Editor
         }
 
         // Sample device informations
-        private DeviceInformation _deviceTestInformation1 = new DeviceInformation { Id = "abcd", Name = "First Test BLE Device" };
-        private DeviceInformation _deviceTestInformation2 = new DeviceInformation { Id = "efgh", Name = "Second Test BLE Device" };
+        private DeviceInformation _deviceTestInformation1 = new DeviceInformation { Id = "XX:XX:XX:XX", Name = "First Test HoloSense_pajdata" };
+        private DeviceInformation _deviceTestInformation2 = new DeviceInformation { Id = "YY:YY:YY:YY", Name = "Second Test HoloSense_pajdata Bla" };
 
         // Create buttons with sample device informations, starts and stops searching
         private void Update()
@@ -146,6 +146,12 @@ namespace HoloLight.HoloStylus.Connection.Editor
     {
         public string Id;
         public string Name;
+        public DeviceInformationPairing Pairing = new DeviceInformationPairing();
+    }
+
+    public class DeviceInformationPairing
+    {
+        public bool IsPaired = true;
     }
 
     /// <summary>

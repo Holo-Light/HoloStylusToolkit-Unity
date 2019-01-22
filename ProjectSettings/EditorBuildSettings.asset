@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/HoloLight/Stylus/Examples/Intro/Scenes/Intro.unity
     guid: 9038a5c29eae84e42a66c8519ae2b446
   - enabled: 1
+    path: Assets/HoloLight/Stylus/Examples/Preloading/Scenes/Preloading.unity
+    guid: e8856dd35833805479646595d76b8166
+  - enabled: 1
     path: Assets/HoloLight/Stylus/Examples/SceneCollection/Scenes/SceneCollection.unity
     guid: c7bef4cf958edef418402db64966efeb
   - enabled: 1
