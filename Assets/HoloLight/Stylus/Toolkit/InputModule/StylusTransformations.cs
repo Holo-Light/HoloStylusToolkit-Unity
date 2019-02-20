@@ -10,15 +10,22 @@
  * Author of this file is Peter Roth
  *******************************************************/
 #endregion
+
+using System.Collections.Generic;
 using HoloLight.HoloStylus.Configuration;
+using UnityEngine;
 
 namespace HoloLight.HoloStylus.InputModule
 {
     /// <summary>
     /// Handles Transformation updates of InputManager.
     /// </summary>
+    ///
     public class StylusTransformations
     {
+        private Queue<GameObject> _oldTransformsQueue= new Queue<GameObject>();
+
+        private int _queueCounter = 0;
         // Access to the input manager
         private InputManager _input
         {
@@ -91,16 +98,37 @@ namespace HoloLight.HoloStylus.InputModule
             }
         }
 
-        public StylusTransformations() { }
+        public StylusTransformations()
+        {
+        }
 
         private StylusTransformData RecalculateValues(StylusTransformData data)
         {
+            var temporaryTransform=new GameObject();
+            MonoBehaviour.DontDestroyOnLoad(temporaryTransform);
+            temporaryTransform.transform.position = _input.HMUTransform.position;
+            temporaryTransform.transform.rotation = _input.HMUTransform.rotation;
+            _oldTransformsQueue.Enqueue(temporaryTransform);
+            if (_queueCounter < 5)
+            {
+                _queueCounter++;
+                return new StylusTransformData
+                {
+                    Position = _input.HMUTransform.TransformPoint(data.Position),
+                    Rotation = _input.HMUTransform.transform.rotation * data.Rotation,
+                    Acceleration = data.Rotation * data.Acceleration
+                };
+            }
+
+            var oldHMU = _oldTransformsQueue.Dequeue();
+
             var recalculatedData = new StylusTransformData
             {
-                Position = _input.HMUTransform.TransformPoint(data.Position),
-                Rotation = _input.HMUTransform.rotation * data.Rotation,
+                Position = oldHMU.transform.TransformPoint(data.Position),
+                Rotation = oldHMU.transform.rotation * data.Rotation,
                 Acceleration = data.Rotation * data.Acceleration
             };
+            MonoBehaviour.Destroy(oldHMU);
 
             return recalculatedData;
         }
