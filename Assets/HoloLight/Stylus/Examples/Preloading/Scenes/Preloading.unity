@@ -357,9 +357,59 @@ Prefab:
       propertyPath: AutoConnect
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114094320718771714, guid: 1ff0d714abba0ff42877898bf4473eb6,
+        type: 2}
+      propertyPath: _hmuTransform
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114290143671727278, guid: 1ff0d714abba0ff42877898bf4473eb6,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104529256654950, guid: 1ff0d714abba0ff42877898bf4473eb6, type: 2}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1096790869517550, guid: 1ff0d714abba0ff42877898bf4473eb6, type: 2}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1927765124951454, guid: 1ff0d714abba0ff42877898bf4473eb6, type: 2}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1156478739228502, guid: 1ff0d714abba0ff42877898bf4473eb6, type: 2}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1931861500847632, guid: 1ff0d714abba0ff42877898bf4473eb6, type: 2}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1ff0d714abba0ff42877898bf4473eb6, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1154689748 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1385478460269694, guid: 1ff0d714abba0ff42877898bf4473eb6,
+    type: 2}
+  m_PrefabInternal: {fileID: 1154689747}
+--- !u!114 &1154689749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1154689748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -768656878, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_MaxRayIntersections: 0
 --- !u!1 &1839239828
 GameObject:
   m_ObjectHideFlags: 0

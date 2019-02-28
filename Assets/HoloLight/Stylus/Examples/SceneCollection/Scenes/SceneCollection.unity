@@ -282,6 +282,9 @@ MonoBehaviour:
   - Name: Calibration Per Point
     Description: Rough calibration
     IsActive: 1
+  - Name: HMUCalibration
+    Description: Calibrate the HMU
+    IsActive: 1
   - Name: Focus
     Description: Focus' tests
     IsActive: 1
@@ -305,9 +308,6 @@ MonoBehaviour:
     IsActive: 1
   - Name: Measure
     Description: Measure example
-    IsActive: 1
-  - Name: Coloring
-    Description: Coloring example
     IsActive: 1
   _backButtonPosition: {fileID: 1369433899}
   _headline: Welcome!

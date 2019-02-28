@@ -17,7 +17,14 @@ namespace HoloLight.HoloStylus.Examples.Preloading
 {
     public class LoadNextSceneAfterConnect : MonoBehaviour
     {
-        private bool _autoConnect { get { return DeviceManager.Instance.AutoConnect; } }
+        private bool _autoConnect
+        {
+            get
+            {
+                if (DeviceManager.Instance == null) { return false; }
+                return DeviceManager.Instance.AutoConnect;
+            }
+        }
 
         void Start()
         {

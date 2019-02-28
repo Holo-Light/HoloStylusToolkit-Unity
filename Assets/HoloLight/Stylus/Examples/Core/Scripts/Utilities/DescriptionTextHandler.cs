@@ -42,6 +42,7 @@ namespace HoloLight.Utilities
         /// <param name="description">The description text of the scene</param>
         public static void ChangeText(string headline, string description)
         {
+            if (_headline == null || _description == null) { return; }
             _headline.text = headline;
             _description.text = description;
         }

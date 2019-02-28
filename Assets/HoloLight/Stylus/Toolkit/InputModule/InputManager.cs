@@ -74,6 +74,8 @@ namespace HoloLight.HoloStylus.InputModule
         private StylusButtons _buttons;
         private EventDebugger _eventDebugger;
 
+        public const int RECALCULATED_STYLUS_TRANSFORMATION_FRAME = 5;
+
         /// <summary>
         /// Position, rotation and acceleration of the stylus.
         /// (Calculated to world space in relation to the HMU).
@@ -251,6 +253,14 @@ namespace HoloLight.HoloStylus.InputModule
                     }
                 }
             }
+
+
+            var hmuTransform = new GameObject("HMU Transform");
+            hmuTransform.transform.SetParent(_hmuTransform, false);
+            //hmuTransform.transform.localPosition = Vector3.zero;
+            //hmuTransform.transform.localRotation = Quaternion.identity;
+            _hmuTransform = hmuTransform.transform;
+
         }
 
         private void RegisterEvents()

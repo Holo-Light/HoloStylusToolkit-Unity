@@ -31,12 +31,15 @@ namespace HoloLight.HoloStylus.Examples.Calibration
         /// </summary>
         public float Value;
 
+        private Transform _camTransform;
+
         /// <summary>
         /// Registers the click method
         /// </summary>
         private void Start()
         {
             GetComponent<Button>().onClick.AddListener(() => CalibrationManager.AddValueToAxis(Axis, Value));
+            _camTransform = Camera.main.transform;
         }
 
         /// <summary>
@@ -44,9 +47,9 @@ namespace HoloLight.HoloStylus.Examples.Calibration
         /// </summary>
         private void Update()
         {
-            if (Camera.main != null)
+            if (_camTransform != null)
             {
-                transform.forward = transform.position - Camera.main.transform.position;
+                transform.forward = transform.position - _camTransform.transform.position;
             }
         }
     }

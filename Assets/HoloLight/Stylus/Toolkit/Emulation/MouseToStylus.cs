@@ -140,6 +140,8 @@ namespace HoloLight.HoloStylus.Emulation
             _currentDepth += Time.fixedDeltaTime * Input.GetAxis(DEPTH_AXIS) * _depthSpeed;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
+            //var tempPos = ray.GetPoint(_currentDepth);
+            //ray = new Ray(InputInstance.HMUTransform.position, InputInstance.HMUTransform.position + tempPos);
             var currentPosition = ray.GetPoint(_currentDepth);
 
             //Click button input

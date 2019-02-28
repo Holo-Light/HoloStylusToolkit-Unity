@@ -23,7 +23,28 @@ namespace HoloLight.HoloStylus.InputModule
     ///
     public class StylusTransformations
     {
-        private Queue<GameObject> _oldTransformsQueue= new Queue<GameObject>();
+        internal class TransformQueueElement
+        {
+            public Vector3 Position;
+            public Quaternion Rotation;
+        }
+
+        private Queue<TransformQueueElement> _oldTransformsQueue= new Queue<TransformQueueElement>();
+        private Transform _oldTransform
+        {
+            get
+            {
+                if(_oldTransformInternal == null)
+                {
+                    var oldtransform = new GameObject("Last Stylus transform position helper");
+                    _oldTransformInternal = oldtransform.transform;
+                }
+
+                return _oldTransformInternal;
+            }
+        }
+
+        private Transform _oldTransformInternal;
 
         private int _queueCounter = 0;
         // Access to the input manager
@@ -104,12 +125,11 @@ namespace HoloLight.HoloStylus.InputModule
 
         private StylusTransformData RecalculateValues(StylusTransformData data)
         {
-            var temporaryTransform=new GameObject();
-            MonoBehaviour.DontDestroyOnLoad(temporaryTransform);
-            temporaryTransform.transform.position = _input.HMUTransform.position;
-            temporaryTransform.transform.rotation = _input.HMUTransform.rotation;
-            _oldTransformsQueue.Enqueue(temporaryTransform);
-            if (_queueCounter < 5)
+            _oldTransform.position = _input.HMUTransform.position;
+            _oldTransform.rotation = _input.HMUTransform.rotation;
+            _oldTransformsQueue.Enqueue(new TransformQueueElement() { Position = _oldTransform.position, Rotation = _oldTransform.rotation });
+
+            if (_queueCounter < InputManager.RECALCULATED_STYLUS_TRANSFORMATION_FRAME)
             {
                 _queueCounter++;
                 return new StylusTransformData
@@ -120,15 +140,17 @@ namespace HoloLight.HoloStylus.InputModule
                 };
             }
 
-            var oldHMU = _oldTransformsQueue.Dequeue();
+            var old = _oldTransformsQueue.Dequeue();
+
+            _oldTransform.position = old.Position;
+            _oldTransform.rotation = old.Rotation;
 
             var recalculatedData = new StylusTransformData
             {
-                Position = oldHMU.transform.TransformPoint(data.Position),
-                Rotation = oldHMU.transform.rotation * data.Rotation,
+                Position = _oldTransform.TransformPoint(data.Position),
+                Rotation = _oldTransform.rotation * data.Rotation,
                 Acceleration = data.Rotation * data.Acceleration
             };
-            MonoBehaviour.Destroy(oldHMU);
 
             return recalculatedData;
         }

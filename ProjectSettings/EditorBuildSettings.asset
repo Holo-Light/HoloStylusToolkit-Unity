@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/HoloLight/Stylus/Examples/Calibration/Scenes/Calibration Per Point.unity
     guid: 2ce054c8ea6883c4ba7330ebce3d11cb
   - enabled: 1
+    path: Assets/HoloLight/Stylus/Examples/Calibration/Scenes/HMUCalibration.unity
+    guid: e0e66b511de7df340a41f6e12bfb8107
+  - enabled: 1
     path: Assets/HoloLight/Stylus/Examples/Focus/Scenes/Focus.unity
     guid: 5811d952e3ee3024193ca20f4be4f220
   - enabled: 1

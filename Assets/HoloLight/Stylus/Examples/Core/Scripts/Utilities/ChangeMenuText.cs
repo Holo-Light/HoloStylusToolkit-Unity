@@ -26,7 +26,7 @@ namespace HoloLight.HoloStylus.Examples
         private string _description = "";
 
         // Initilialization
-        private void Start()
+        private void OnEnable()
         {
             ChangeText(_description);
         }
