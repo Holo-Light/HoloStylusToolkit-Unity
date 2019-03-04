@@ -261,6 +261,9 @@ namespace HoloLight.HoloStylus.InputModule
             //hmuTransform.transform.localRotation = Quaternion.identity;
             _hmuTransform = hmuTransform.transform;
 
+            _hmuTransform.localPosition = CalibrationPreferences.HMUCalibrationData.Position;
+            _hmuTransform.localRotation = CalibrationPreferences.HMUCalibrationData.Rotation;
+
         }
 
         private void RegisterEvents()

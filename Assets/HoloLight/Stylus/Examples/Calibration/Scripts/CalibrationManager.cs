@@ -11,8 +11,6 @@
  *******************************************************/
 #endregion
 using HoloLight.HoloStylus.InputModule;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -48,6 +46,15 @@ namespace HoloLight.HoloStylus.Examples.Calibration
             data.Offset = offset;
             CalibrationPreferences.CalibrationData = data;
             CalibrationPreferences.Save();
+        }
+
+        public static void SaveHMUTransform(Transform transform)
+        {
+            var data = new CalibrationPreferences.HMUData();
+            data.Position = transform.localPosition;
+            data.Rotation = transform.localRotation;
+            CalibrationPreferences.HMUCalibrationData = data;
+            CalibrationPreferences.SaveHMU(data);
         }
 
         /// <summary>

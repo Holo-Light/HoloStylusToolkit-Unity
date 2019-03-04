@@ -10,8 +10,6 @@
  * Author of this file is Peter Roth
  *******************************************************/
 #endregion
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoloLight.HoloStylus.InputModule
@@ -29,6 +27,15 @@ namespace HoloLight.HoloStylus.InputModule
             public const string OFFSET_X = "StylusOffsetX";
             public const string OFFSET_Y = "StylusOffsetY";
             public const string OFFSET_Z = "StylusOffsetZ";
+
+            public const string HMU_POSITION_X = "HMUPositionX";
+            public const string HMU_POSITION_Y = "HMUPositionY";
+            public const string HMU_POSITION_Z = "HMUPositionZ";
+            public const string HMU_ROTATION_X = "HMURotationX";
+            public const string HMU_ROTATION_Y = "HMURotationY";
+            public const string HMU_ROTATION_Z = "HMURotationZ";
+            public const string HMU_ROTATION_W = "HMURotationW";
+
         }
 
         /// <summary>
@@ -49,8 +56,28 @@ namespace HoloLight.HoloStylus.InputModule
             }
         }
 
+        public class HMUData
+        {
+            public Vector3 Position = Vector3.zero;
+            public Quaternion Rotation = Quaternion.identity;
+
+            public HMUData()
+            {
+
+            }
+
+            public HMUData(HMUData data)
+            {
+                this.Position = data.Position;
+                this.Rotation = data.Rotation;
+            }
+        }
+
         // Loaded flag
         private static bool _isLoaded = false;
+        // HMU loaded flag
+        private static bool _isHMULoaded = false;
+
         // hidden calibration data
         private static Data _data;
         /// <summary>
@@ -73,6 +100,49 @@ namespace HoloLight.HoloStylus.InputModule
             }
         }
 
+        // hidden calibration data
+        private static HMUData _hmuData;
+        /// <summary>
+        /// Calibration hmu data, like position and rotation
+        /// Loads data, if it's not loaded
+        /// </summary>
+        public static HMUData HMUCalibrationData
+        {
+            get
+            {
+                if (!_isHMULoaded)
+                {
+                    _hmuData = LoadHMUCalibration();
+                }
+                return _hmuData;
+            }
+            set
+            {
+                SaveHMU(value);
+            }
+        }
+
+        // Load and returns calibration data from player prefs file
+        private static HMUData LoadHMUCalibration()
+        {
+            var data = new HMUData();
+            _isHMULoaded = true;
+
+            float posx = GetFloat(PrefsTags.HMU_POSITION_X);
+            float posy = GetFloat(PrefsTags.HMU_POSITION_Y);
+            float posz = GetFloat(PrefsTags.HMU_POSITION_Z);
+
+            float rotx = GetFloat(PrefsTags.HMU_ROTATION_X);
+            float roty = GetFloat(PrefsTags.HMU_ROTATION_Y);
+            float rotz = GetFloat(PrefsTags.HMU_ROTATION_Z);
+            float rotw = GetFloat(PrefsTags.HMU_ROTATION_W);
+
+            data.Position = new Vector3(posx, posy, posz);
+            data.Rotation = new Quaternion(rotx, roty, rotz, rotw);
+
+            return data;
+        }
+
         // Load and returns calibration data from player prefs file
         private static Data LoadCalibrationData()
         {
@@ -85,10 +155,6 @@ namespace HoloLight.HoloStylus.InputModule
 
             data.Offset = new Vector3(offsetx, offsety, offsetz);
 
-            if(data.Offset == Vector3.zero)
-            {
-                data.Offset = Vector3.zero;
-            }
             return data;
         }
 
@@ -100,6 +166,18 @@ namespace HoloLight.HoloStylus.InputModule
             PlayerPrefs.SetFloat(PrefsTags.OFFSET_X, data.Offset.x);
             PlayerPrefs.SetFloat(PrefsTags.OFFSET_Y, data.Offset.y);
             PlayerPrefs.SetFloat(PrefsTags.OFFSET_Z, data.Offset.z);
+            PlayerPrefs.Save();
+        }
+
+        public static void SaveHMU(HMUData data)
+        {
+            PlayerPrefs.SetFloat(PrefsTags.HMU_POSITION_X, data.Position.x);
+            PlayerPrefs.SetFloat(PrefsTags.HMU_POSITION_Y, data.Position.y);
+            PlayerPrefs.SetFloat(PrefsTags.HMU_POSITION_Z, data.Position.z);
+            PlayerPrefs.SetFloat(PrefsTags.HMU_ROTATION_X, data.Rotation.x);
+            PlayerPrefs.SetFloat(PrefsTags.HMU_ROTATION_Y, data.Rotation.y);
+            PlayerPrefs.SetFloat(PrefsTags.HMU_ROTATION_Z, data.Rotation.z);
+            PlayerPrefs.SetFloat(PrefsTags.HMU_ROTATION_W, data.Rotation.w);
             PlayerPrefs.Save();
         }
 
@@ -124,6 +202,5 @@ namespace HoloLight.HoloStylus.InputModule
                 return 0;
             }
         }
-
     }
 }

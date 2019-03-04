@@ -1,6 +1,16 @@
-﻿using HoloLight.HoloStylus.InputModule;
-using System.Collections;
-using System.Collections.Generic;
+﻿#region copyright
+/*******************************************************
+ * Copyright (C) 2017-2018 Holo-Light GmbH -> <info@holo-light.com>
+ * 
+ * This file is part of the Stylus SDK.
+ * 
+ * Stylus SDK can not be copied and/or distributed without the express
+ * permission of the Holo-Light GmbH
+ * 
+ * Author of this file is Peter Roth
+ *******************************************************/
+#endregion
+using HoloLight.HoloStylus.InputModule;
 using UnityEngine;
 
 namespace HoloLight.HoloStylus.Examples.Calibration
@@ -35,6 +45,8 @@ namespace HoloLight.HoloStylus.Examples.Calibration
                     _input.HMUTransform.Rotate(Vector3.forward, value);
                     break;
             }
+
+            CalibrationManager.SaveHMUTransform(_input.HMUTransform);
         }
 
         public void Move(StylusAxis axis, float value)
@@ -51,6 +63,8 @@ namespace HoloLight.HoloStylus.Examples.Calibration
                     _input.HMUTransform.localPosition += Vector3.forward * value;
                     break;
             }
+
+            CalibrationManager.SaveHMUTransform(_input.HMUTransform);
         }
 
         public void OnStylusBackClick()

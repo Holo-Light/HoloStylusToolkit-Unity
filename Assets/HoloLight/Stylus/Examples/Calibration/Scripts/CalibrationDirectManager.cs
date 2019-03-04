@@ -12,11 +12,8 @@
 #endregion
 using HoloLight.HoloStylus.InputModule;
 using HoloLight.Utilities;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace HoloLight.HoloStylus.Examples.Calibration
 {
