@@ -309,6 +309,9 @@ MonoBehaviour:
   - Name: Measure
     Description: Measure example
     IsActive: 1
+  - Name: Coloring
+    Description: Coloring example
+    IsActive: 1
   _backButtonPosition: {fileID: 1369433899}
   _headline: Welcome!
   _description: 'Select your demo, get inspired and see
