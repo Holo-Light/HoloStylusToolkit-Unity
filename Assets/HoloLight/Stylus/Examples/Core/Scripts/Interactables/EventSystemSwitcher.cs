@@ -99,7 +99,7 @@ namespace HoloLight.HoloStylus.InputModule
         /// <param name="type">Input module type</param>
         private void EnableModule(InputModuleType type)
         {
-            StandaloneInputModule.enabled = type == InputModuleType.Standalone;
+           // StandaloneInputModule.enabled = type == InputModuleType.Standalone;
             GazeInputModule.enabled = type == InputModuleType.Gaze;
             StylusInputModule.enabled = type == InputModuleType.Stylus;
         }

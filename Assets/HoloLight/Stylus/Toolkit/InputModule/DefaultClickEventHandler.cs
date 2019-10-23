@@ -10,8 +10,12 @@
  * Author of this file is Peter Roth
  *******************************************************/
 #endregion
+
+using System;
+using System.Diagnostics;
 using HoloLight.HoloStylus.Configuration;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace HoloLight.HoloStylus.InputModule
 {
@@ -77,6 +81,11 @@ namespace HoloLight.HoloStylus.InputModule
         // flag for hold events raised
         private readonly bool[] _holdEventsRaised = new bool[2] { false, false };
 
+
+
+        private Stopwatch _stopWatch = new Stopwatch();
+
+        private float _elapsedTime = 1000;
         /// <summary>
         /// Called if some stylus button is pressed
         /// </summary>
@@ -84,7 +93,22 @@ namespace HoloLight.HoloStylus.InputModule
         public void StylusButtonDown(int sourceId)
         {
             _lastButtonDownTime[sourceId] = Time.timeSinceLevelLoad;
-            RaiseSingleClick(sourceId);
+            if (_stopWatch.IsRunning)
+            {
+                _stopWatch.Stop();
+                _elapsedTime = _stopWatch.ElapsedMilliseconds;
+                _stopWatch.Reset();
+            }
+
+            if (_elapsedTime > 200)
+            {
+                RaiseSingleClick(sourceId);
+            }
+
+            if (!_stopWatch.IsRunning)
+            {
+                _stopWatch.Start();
+            }
         }
 
         /// <summary>

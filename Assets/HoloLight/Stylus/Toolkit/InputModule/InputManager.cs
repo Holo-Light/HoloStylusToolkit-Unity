@@ -40,6 +40,9 @@ namespace HoloLight.HoloStylus.InputModule
         [HideInInspector]
         public bool AutoSetHMU = false;
 
+        [SerializeField, Range(0.1f, 60)]
+        private float _lerpMultiplier = 15;
+
         /// <summary>
         /// Transform of the HMU. E.g. if the HMU is on the hololens, then the Camera is the HMU transform.
         /// </summary>
@@ -85,7 +88,7 @@ namespace HoloLight.HoloStylus.InputModule
         public StylusTransformData StylusTransform
         {
             get { return _stylusTransformations.StylusTransform; }
-            set { _stylusTransformations.StylusTransform = value; }
+            //set { _stylusTransformations.StylusTransform = value; }
         }
 
         ///// <summary>
@@ -213,6 +216,8 @@ namespace HoloLight.HoloStylus.InputModule
 
             _stylusTransformations = new StylusTransformations();
             _buttons = new StylusButtons();
+            _buttons.StylusActionButtonData = new StylusButtonData { SourceID = 0, Pressure = 0 };
+            _buttons.StylusBackButtonData = new StylusButtonData { SourceID = 1, Pressure = 0 };
 
             _eventDebugger = new EventDebugger();
         }
@@ -229,6 +234,11 @@ namespace HoloLight.HoloStylus.InputModule
         {
             DeregisterEvents();
             GlobalListeners.Clear();
+        }
+
+        public void FixedUpdate()
+        {
+            _stylusTransformations.StylusTransformUpdate(_lerpMultiplier * Time.fixedDeltaTime);
         }
 
         // Set HMU transform, if there is a camera.

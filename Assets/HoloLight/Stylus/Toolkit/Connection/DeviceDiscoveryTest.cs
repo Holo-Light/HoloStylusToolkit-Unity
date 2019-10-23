@@ -27,6 +27,11 @@ namespace HoloLight.HoloStylus.Connection.Editor
             DestroyImmediate(gameObject);
         }
     }
+
+    public class StylusConfig
+    {
+        public StylusConfig(int version, string id) { }
+    }
 }
 #elif UNITY_EDITOR
 using UnityEditor;
@@ -60,7 +65,7 @@ namespace HoloLight.HoloStylus.Connection.Editor
         // Stops the device search after destruction
         private void OnDestroy()
         {
-            if(_deviceManager == null)
+            if (_deviceManager == null)
             {
                 return;
             }
@@ -68,13 +73,13 @@ namespace HoloLight.HoloStylus.Connection.Editor
         }
 
         // Sample device informations
-        private DeviceInformation _deviceTestInformation1 = new DeviceInformation { Id = "XX:XX:XX:XX", Name = "First Test HoloSense_pajdata" };
-        private DeviceInformation _deviceTestInformation2 = new DeviceInformation { Id = "YY:YY:YY:YY", Name = "Second Test HoloSense_pajdata Bla" };
+        private DeviceInformation _deviceTestInformation1 = new DeviceInformation { Id = "XX:XX:XX:XX", Name = "First Test holosense UNITY_FAKE_RECEIVER" };
+        private DeviceInformation _deviceTestInformation2 = new DeviceInformation { Id = "YY:YY:YY:YY", Name = "Second Test UNITY_FAKE_RECEIVER Bla" };
 
         // Create buttons with sample device informations, starts and stops searching
         private void Update()
         {
-            
+
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 _deviceWatcher.Added(_deviceWatcher, _deviceTestInformation1);
@@ -105,18 +110,25 @@ namespace HoloLight.HoloStylus.Connection.Editor
     {
         public DeviceWatcher DeviceWatcher = new DeviceWatcher();
     }
+    public class DeviceInformationUpdate
+    {
 
+    }
     /// <summary>
     /// This device discovery fake all neccessary UWP methods for UNITY
     /// </summary>
     public class DeviceWatcher
     {
         public delegate void AddHandler(DeviceWatcher sender, DeviceInformation args);
+        public delegate void UpdatedHandler(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate);
+        public delegate void RemovedHandler(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate);
         public delegate void EnumerationCompletedHandler(DeviceWatcher sender, object args);
         public delegate void StoppedHandler(DeviceWatcher sender, object args);
         public AddHandler Added;
         public EnumerationCompletedHandler EnumerationCompleted;
         public StoppedHandler Stopped;
+        public UpdatedHandler Updated;
+        public RemovedHandler Removed;
 
         public void Start() { }
         public void Stop() { }
@@ -157,7 +169,7 @@ namespace HoloLight.HoloStylus.Connection.Editor
     /// <summary>
     /// Event arguments for faking status of the stylus connection
     /// </summary>
-    public class  StylusEventArgs : EventArgs
+    public class StylusEventArgs : EventArgs
     {
         public StylusData StylusData { get; private set; }
         public StylusEventArgs() { }
@@ -206,6 +218,10 @@ namespace HoloLight.HoloStylus.Connection.Editor
 
     }
 
+    public class StylusConfig
+    {
+        public StylusConfig(int version, string id) { }
+    }
     /// <summary>
     /// Feedback of the device discovery test in the editor.
     /// </summary>

@@ -43,6 +43,9 @@ namespace HoloLight.HoloStylus.Emulation
         // Speed of changing the depth.
         [SerializeField, Tooltip("Speed of changing the depth.")]
         private float _depthSpeed = 1;
+        // Distance of the stylus tip at start.
+        [SerializeField, Tooltip("Distance of the stylus tip at start.")]
+        private float _startingDistance = 2;
         // Used camera for local transform data.
         private Camera _camera;
 
@@ -122,7 +125,7 @@ namespace HoloLight.HoloStylus.Emulation
                 enabled = false;
             }
 
-            _currentData.Position = Vector3.forward * 2;
+            _currentData.Position = Vector3.forward * _startingDistance;
             InputInstance.StylusTransformRaw = _currentData;
 
             _currentDepth = Vector3.Distance(_currentData.Position, _camera.transform.position);
@@ -164,7 +167,6 @@ namespace HoloLight.HoloStylus.Emulation
             _currentData.Rotation = currentRotation;
 
             InputInstance.StylusTransformRaw = _currentData;
-            
         }
 
         // Helper method to get the local space of the hmu transform.

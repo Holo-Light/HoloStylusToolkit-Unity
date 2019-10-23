@@ -154,7 +154,7 @@ namespace HoloLight.HoloStylus.Listener
                 var backDoubleClickHandler = iStylusInput as IStylusBackDoubleClick;
                 if (backDoubleClickHandler != null)
                 {
-                    InputInstance.DefaultClickEventHandler.OnActionDoubleClickEvent += backDoubleClickHandler.OnStylusBackDoubleClick;
+                    InputInstance.DefaultClickEventHandler.OnBackDoubleClickEvent += backDoubleClickHandler.OnStylusBackDoubleClick;
                 }
 
                 var backHoldHandler = iStylusInput as IStylusBackHold;
@@ -229,7 +229,7 @@ namespace HoloLight.HoloStylus.Listener
                 var backDoubleClickHandler = iStylusInput as IStylusBackDoubleClick;
                 if (backDoubleClickHandler != null)
                 {
-                    InputInstance.DefaultClickEventHandler.OnActionDoubleClickEvent -= backDoubleClickHandler.OnStylusBackDoubleClick;
+                    InputInstance.DefaultClickEventHandler.OnBackDoubleClickEvent -= backDoubleClickHandler.OnStylusBackDoubleClick;
                 }
 
                 var backHoldHandler = iStylusInput as IStylusBackHold;

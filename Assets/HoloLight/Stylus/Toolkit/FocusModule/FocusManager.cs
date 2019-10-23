@@ -171,6 +171,8 @@ namespace HoloLight.HoloStylus.FocusModule
                 if (actionHoldHandler != null)
                 {
                     InputInstance.DefaultClickEventHandler.OnActionHoldEvent += actionHoldHandler.OnStylusActionHold;
+                    InputInstance.DefaultClickEventHandler.OnActionHoldStartEvent += actionHoldHandler.OnStylusActionHoldStart;
+                    InputInstance.DefaultClickEventHandler.OnActionHoldEndEvent += actionHoldHandler.OnStylusActionHoldEnd;
                 }
 
                 // Back button clicks
@@ -183,13 +185,15 @@ namespace HoloLight.HoloStylus.FocusModule
                 var backDoubleClickHandler = iStylusInput as IStylusBackDoubleClick;
                 if (backDoubleClickHandler != null)
                 {
-                    InputInstance.DefaultClickEventHandler.OnActionDoubleClickEvent += backDoubleClickHandler.OnStylusBackDoubleClick;
+                    InputInstance.DefaultClickEventHandler.OnBackDoubleClickEvent += backDoubleClickHandler.OnStylusBackDoubleClick;
                 }
 
                 var backHoldHandler = iStylusInput as IStylusBackHold;
                 if (backHoldHandler != null)
                 {
-                    InputInstance.DefaultClickEventHandler.OnActionHoldEvent += backHoldHandler.OnStylusBackHold;
+                    InputInstance.DefaultClickEventHandler.OnBackHoldEvent += backHoldHandler.OnStylusBackHold;
+                    InputInstance.DefaultClickEventHandler.OnBackHoldStartEvent += backHoldHandler.OnStylusBackHoldStart;
+                    InputInstance.DefaultClickEventHandler.OnBackHoldEndEvent += backHoldHandler.OnStylusBackHoldEnd;
                 }
             }
         }
@@ -239,15 +243,15 @@ namespace HoloLight.HoloStylus.FocusModule
                 var backDoubleClickHandler = iStylusInput as IStylusBackDoubleClick;
                 if (backDoubleClickHandler != null)
                 {
-                    InputInstance.DefaultClickEventHandler.OnActionDoubleClickEvent -= backDoubleClickHandler.OnStylusBackDoubleClick;
+                    InputInstance.DefaultClickEventHandler.OnBackDoubleClickEvent -= backDoubleClickHandler.OnStylusBackDoubleClick;
                 }
 
                 var backHoldHandler = iStylusInput as IStylusBackHold;
                 if (backHoldHandler != null)
                 {
-                    InputInstance.DefaultClickEventHandler.OnActionHoldEvent -= backHoldHandler.OnStylusBackHold;
-                    InputInstance.DefaultClickEventHandler.OnActionHoldStartEvent -= backHoldHandler.OnStylusBackHoldStart;
-                    InputInstance.DefaultClickEventHandler.OnActionHoldEndEvent -= backHoldHandler.OnStylusBackHoldEnd;
+                    InputInstance.DefaultClickEventHandler.OnBackHoldEvent -= backHoldHandler.OnStylusBackHold;
+                    InputInstance.DefaultClickEventHandler.OnBackHoldStartEvent -= backHoldHandler.OnStylusBackHoldStart;
+                    InputInstance.DefaultClickEventHandler.OnBackHoldEndEvent -= backHoldHandler.OnStylusBackHoldEnd;
                 }
             }
         }

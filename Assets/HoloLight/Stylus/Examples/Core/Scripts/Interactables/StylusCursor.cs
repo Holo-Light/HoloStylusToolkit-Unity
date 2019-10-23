@@ -36,7 +36,7 @@ namespace HoloLight.HoloStylus.Examples.SceneCollection
         /// </summary>
         private void Update()
         {
-            transform.position = _input.StylusTransformRaw.Position;
+            transform.position = _input.StylusTransform.Position;
         }
     }
 }

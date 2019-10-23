@@ -22,7 +22,7 @@ The project contains a toolkit which helps developers to create Mixed Reality Ap
 
 - [Windows 10 FCU](https://www.microsoft.com/software-download/windows10)
 - [Unity 3D](https://unity3d.com/get-unity/download/archive)
-- [Visual Studio 2017](http://dev.windows.com/downloads)
+- [Visual Studio 2017/2019](https://visualstudio.microsoft.com/de/downloads/)
 
 # <a name="driversdk"></a> Holo-Stylus Driver SDK
 

@@ -16,7 +16,6 @@ using HoloLight.HoloStylus.InputModule;
 using System.Linq;
 using System.Xml.Serialization;
 using System.IO;
-
 #if WINDOWS_UWP
 using HoloLight.DriverLibrary.Events;
 using Windows.Devices.Enumeration;
@@ -24,6 +23,12 @@ using HoloLight.DriverLibrary;
 using HoloLight.DriverLibrary.DeviceDiscovery;
 using HoloLight.DriverLibrary.Devices;
 using HoloLight.DriverLibrary.Data;
+
+using Tracker;
+using Windows.Storage;
+using System.Threading.Tasks;
+using System;
+
 #endif
 #if UNITY_EDITOR
 using HoloLight.HoloStylus.Connection.Editor;
@@ -31,11 +36,21 @@ using HoloLight.HoloStylus.Connection.Editor;
 
 namespace HoloLight.HoloStylus.Connection
 {
+    public enum StylusType
+    {
+        Version1,
+        Version2
+    }
+
     /// <summary>
     /// Base class for all connection stuff
     /// </summary>
+    ///
     public class DeviceManager : MonoBehaviour
     {
+        //   [SerializeField]
+        //   public StylusVersion StylusVersion;
+
         // Access to the input manager
         private InputManager _input
         {
@@ -45,6 +60,15 @@ namespace HoloLight.HoloStylus.Connection
             }
         }
 
+        private float _lastButtonEventAction = 0;
+        private float _lastButtonEventBack = 0;
+
+#if WINDOWS_UWP
+        private IPositionCalculation _positionCalculator;
+        private Tracker.Tracker _tracker;
+        private float[] _cameraData;
+        private float[] positionFloat;
+#endif
         /// <summary>
         /// Device found event handler.
         /// </summary>
@@ -89,7 +113,8 @@ namespace HoloLight.HoloStylus.Connection
         /// <summary>
         /// Base device name for identification
         /// </summary>
-        private string _baseDeviceName = "HoloSense_pajdata";
+        private string _baseDeviceName = "UNITY_FAKE_RECEIVER";
+
 
         /// <summary>
         /// 
@@ -108,8 +133,17 @@ namespace HoloLight.HoloStylus.Connection
             {
                 DestroyImmediate(gameObject);
             }
+
         }
 
+#if WINDOWS_UWP
+        private async void initHMUv2(DeviceInformation device) {
+            string filePath = await GetFilePath();
+            _positionCalculator = new PositionCalculationHMUv2(filePath);
+            _baseDeviceName = _positionCalculator.BaseDeviceName;
+            ConnectToDevice(device);
+        }
+#endif
         // resets singleton
         private void OnDestroy()
         {
@@ -134,15 +168,27 @@ namespace HoloLight.HoloStylus.Connection
 
             if (_input != null && (_receivingdata))
             {
+                _receivingdata = false;
+#if WINDOWS_UWP
+                _positionCalculator.StylusData = e;
+                StylusButtonData Button1 = new StylusButtonData { SourceID = 1, Pressure = _positionCalculator.Button1 };
+                _input.StylusActionButtonData = Button1;
+                StylusButtonData Button2 = new StylusButtonData { SourceID = 0, Pressure = _positionCalculator.Button2 };
+                _input.StylusBackButtonData = Button2;                  
+                _input.StylusTransformRaw = new StylusTransformData { Position = _positionCalculator.Position };
+#endif
+#if UNITY_EDITOR
+
                 Vector3 Position = new Vector3(e.StylusData.Position.X, e.StylusData.Position.Y, e.StylusData.Position.Z);
                 StylusButtonData Button1 = new StylusButtonData { SourceID = 1, Pressure = e.StylusData.ActionButton };
                 StylusButtonData Button2 = new StylusButtonData { SourceID = 0, Pressure = e.StylusData.BackButton };
                 _input.StylusTransformRaw = new StylusTransformData { Position = Position };
                 _input.StylusActionButtonData = Button1;
                 _input.StylusBackButtonData = Button2;
+#endif
 
             }
-            _receivingdata = false;
+
         }
 
         /// <summary>
@@ -157,6 +203,13 @@ namespace HoloLight.HoloStylus.Connection
 
         }
 
+        private void OnDeviceUpdated(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
+        {
+        }
+
+        private void OnDeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
+        {
+        }
         /// <summary>
         /// Starts the device search
         /// </summary>
@@ -170,6 +223,9 @@ namespace HoloLight.HoloStylus.Connection
             DeviceDiscovery.DeviceWatcher.Added += DeviceWatcherAdded;
             DeviceDiscovery.DeviceWatcher.EnumerationCompleted += DeviceWatcherEnumerationCompleted;
             DeviceDiscovery.DeviceWatcher.Stopped += DeviceWatcherStopped;
+            DeviceDiscovery.DeviceWatcher.Removed += OnDeviceRemoved;
+            DeviceDiscovery.DeviceWatcher.Updated += OnDeviceUpdated;
+
             DeviceDiscovery.DeviceWatcher.Start();
         }
 
@@ -206,19 +262,37 @@ namespace HoloLight.HoloStylus.Connection
         }
 
 #if WINDOWS_UWP
+        private async Task<string> GetFilePath() {
+            StorageFolder _currentStorage = KnownFolders.DocumentsLibrary;
+            IReadOnlyList<StorageFile> documentsFileList = await _currentStorage.GetFilesAsync();
+        
+            string filePath = "";
+
+            for (int i = 0; i < documentsFileList.Count; i++)
+            { 
+                StorageFile file = documentsFileList.ElementAt(i);
+                if (file.Name.ToLower() == "stylus.nnf") {
+                    filePath = file.Path;
+                    return filePath;
+                }
+            }
+            
+            return filePath;
+        }
+
         /// <summary>
         /// Connects to the device
         /// </summary>
         /// <param name="deviceInfo"></param>
         public async void ConnectToDevice(DeviceInformation deviceInfo)
         {
-            if(!_canConnect)
+            if (!_canConnect)
             {
                 return;
             }
 
             _canConnect = false;
-            
+        // _positionCalculator.Version,    <--- i cant add this as parameter....stylusconfig has only two for the constructor...but can't find that...
             var config = new StylusConfig(deviceInfo.Id);
             _headmountedUnit = new StylusControl(config);
 
@@ -230,7 +304,7 @@ namespace HoloLight.HoloStylus.Connection
             _onConnectToMainThread.Enqueue(deviceInfo);
         }
 
-        
+
 
         /// <summary>
         /// Start access to tracking services
@@ -257,7 +331,7 @@ namespace HoloLight.HoloStylus.Connection
             if (OnDeviceFound == null)
                 return;
 
-            if(CheckDoubledDevices(args))
+            if (CheckDoubledDevices(args))
             {
                 return;
             }
@@ -298,7 +372,6 @@ namespace HoloLight.HoloStylus.Connection
             {
                 return;
             }
-
             if (OnDeviceFound != null)
             {
                 OnDeviceFound(args);
@@ -358,23 +431,34 @@ namespace HoloLight.HoloStylus.Connection
                 OnDeviceFound += OnAutoConnectDeviceFound;
                 OnConnect += OnAutoConnected;
             }
+            // because accessing the directory and finding the path of the .nnf file is async....and when it finds devices and checks the basename..it doesnt conenct because _baseName hasn't changed yet ..i call StartSearch on V2 when it has already finished finding the path (initHMUv2())
+
             StartDeviceSearch();
             DontDestroyOnLoad(transform.root.gameObject);
-
         }
 
         void OnAutoConnectDeviceFound(DeviceInformation device)
         {
-            if(!device.Pairing.IsPaired)
+            if (!device.Pairing.IsPaired)
             {
                 return;
             }
 
-            string nameToLower = device.Name.ToLower();
-            string baseName = _baseDeviceName.ToLower();
-            if(nameToLower.Contains(baseName))
+            string stylusNameLower = device.Name.ToLower();
+
+            if (stylusNameLower.Contains("holosense"))
             {
+#if WINDOWS_UWP
+                _positionCalculator = new PositionCalculationHMUv1();
+                _baseDeviceName = _positionCalculator.BaseDeviceName;
+#endif
                 ConnectToDevice(device);
+            }
+            else if (stylusNameLower.Contains("hmu_v_2"))
+            {
+#if WINDOWS_UWP
+                initHMUv2(device);
+#endif
             }
         }
 
@@ -388,7 +472,7 @@ namespace HoloLight.HoloStylus.Connection
         // Refreshs the stylus data
         private void Update()
         {
-            if(_onConnectToMainThread.Count > 0)
+            if (_onConnectToMainThread.Count > 0)
             {
                 var device = _onConnectToMainThread.Dequeue();
                 OnConnectToMainThread(device);
@@ -402,9 +486,7 @@ namespace HoloLight.HoloStylus.Connection
 
             SettingsFile settings = new SettingsFile();
 
-            settings.BaseDeviceName = _baseDeviceName;
-
-            if(!Directory.Exists(Application.persistentDataPath))
+            if (!Directory.Exists(Application.persistentDataPath))
             {
                 Directory.CreateDirectory(Application.persistentDataPath);
             }
@@ -423,7 +505,7 @@ namespace HoloLight.HoloStylus.Connection
                 LoadStylusSettings();
             }
             else
-            { 
+            {
 
                 XmlSerializer serializer = new XmlSerializer(typeof(SettingsFile));
 
@@ -437,7 +519,6 @@ namespace HoloLight.HoloStylus.Connection
                 if (settings == null)
                     return;
 
-                _baseDeviceName = settings.BaseDeviceName;
             }
         }
     }

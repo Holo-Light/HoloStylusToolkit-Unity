@@ -25,16 +25,16 @@ namespace HoloLight.HoloStylus.InputModule
     {
         internal class TransformQueueElement
         {
-            public Vector3 Position;
-            public Quaternion Rotation;
+            public Vector3 Position = new Vector3(0, 0, 0);
+            public Quaternion Rotation = new Quaternion(0, 0, 0, 0);
         }
 
-        private Queue<TransformQueueElement> _oldTransformsQueue= new Queue<TransformQueueElement>();
+        private Queue<TransformQueueElement> _oldTransformsQueue = new Queue<TransformQueueElement>();
         private Transform _oldTransform
         {
             get
             {
-                if(_oldTransformInternal == null)
+                if (_oldTransformInternal == null)
                 {
                     var oldtransform = new GameObject("Last Stylus transform position helper");
                     _oldTransformInternal = oldtransform.transform;
@@ -70,13 +70,12 @@ namespace HoloLight.HoloStylus.InputModule
             }
             set
             {
-                
+
                 if (_input.HMUTransform == null)
                 {
                     _stylusTransformBeforeCalibrated = value;
                     value.Position += CalibrationPreferences.CalibrationData.Offset;
                     _stylusTransformRaw = value;
-                    _stylusTransform = value;
                 }
                 else
                 {
@@ -84,7 +83,6 @@ namespace HoloLight.HoloStylus.InputModule
                     value.Position += CalibrationPreferences.CalibrationData.Offset;
                     var data = RecalculateValues(value);
                     _stylusTransformRaw = data;
-                    this.StylusTransform = data;
                 }
 
                 _input.RaiseStylusTransformRawChanged(_stylusTransformRaw);
@@ -112,17 +110,13 @@ namespace HoloLight.HoloStylus.InputModule
             {
                 return _stylusTransform;
             }
-            set
-            {
-                _stylusTransform = _thresholdCalculator.AddValue(value);
-                _input.RaiseStylusTransformChanged(_stylusTransform);
-            }
         }
 
-        public StylusTransformations()
+        public void StylusTransformUpdate(float lerpMultiplier)
         {
+            _stylusTransform.Rotation = _stylusTransformRaw.Rotation;
+            _stylusTransform.Position = Vector3.Lerp(_stylusTransform.Position, _stylusTransformRaw.Position, lerpMultiplier);
         }
-
         private StylusTransformData RecalculateValues(StylusTransformData data)
         {
             _oldTransform.position = _input.HMUTransform.position;

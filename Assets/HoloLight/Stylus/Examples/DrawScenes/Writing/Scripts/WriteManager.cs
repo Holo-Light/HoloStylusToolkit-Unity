@@ -22,7 +22,7 @@ namespace HoloLight.HoloStylus.Examples.DrawScenes
     public class WriteManager : BaseDrawManager
     {
         [SerializeField, Tooltip("Minimum time before starting free hand drawing")]
-        private float _minimumHoldTime = 0.15f;
+        private float _minimumHoldTime = 0f;
         private float _startHoldTime = 0;
 
         private LineRenderer _writtenLine;
@@ -34,6 +34,7 @@ namespace HoloLight.HoloStylus.Examples.DrawScenes
         private Sprite _pointSprite;
 
         private List<Vector3> _positions = new List<Vector3>();
+        [SerializeField]
         private Material _lineMaterial;
 
         [SerializeField, Tooltip("Line width")]
@@ -49,12 +50,12 @@ namespace HoloLight.HoloStylus.Examples.DrawScenes
             Rect textureRect = new Rect(0, 0, _writeTexture.width, _writeTexture.height);
             var pointUnitSize = 1 / _writeSize;
             _pointSprite = Sprite.Create(_writeTexture, textureRect, Vector2.one * 0.5f, _writeTexture.width * pointUnitSize);
-
+/*
             _lineMaterial = new Material(Shader.Find("Particles/Additive"))
             {
                 mainTexture = _writeTexture
             };
-
+            */
             SetDrawingDelay = _drawingDelay;
         }
 
